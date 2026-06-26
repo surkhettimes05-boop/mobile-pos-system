@@ -382,7 +382,35 @@ class _HomePageState extends State<HomePage> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        const Text('TOTAL PRICE',
+                        const Text('SUBTOTAL',
+                            style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
+                                letterSpacing: 1.2)),
+                        Text(
+                          'Rs.${state.subtotal.toStringAsFixed(2)}',
+                          style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey),
+                        ),
+                        const SizedBox(height: 4),
+                        const Text('VAT (13%)',
+                            style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
+                                letterSpacing: 1.2)),
+                        Text(
+                          'Rs.${state.vatAmount.toStringAsFixed(2)}',
+                          style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey),
+                        ),
+                        const SizedBox(height: 4),
+                        const Text('TOTAL',
                             style: TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,

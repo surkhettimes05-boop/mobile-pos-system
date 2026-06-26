@@ -124,6 +124,8 @@ class BillingBloc extends Bloc<BillingEvent, BillingState> {
           address2: event.address2,
           phone: event.phone,
           items: items,
+          subtotal: state.subtotal,
+          vatAmount: state.vatAmount,
           total: state.totalAmount,
           footer: event.footer);
 

@@ -109,6 +109,8 @@ class PrinterHelper {
     required String address2,
     required String phone,
     required List<Map<String, dynamic>> items, // Name, Qty, Price, Total
+    required double subtotal,
+    required double vatAmount,
     required double total,
     required String footer,
   }) async {
@@ -175,10 +177,18 @@ class PrinterHelper {
     bytes += _textToBytes('--------------------------------');
     bytes += EscPos.lineFeed;
 
-    // Total (Align Right)
+    // Subtotal
     bytes += EscPos.alignRight;
+    bytes += _textToBytes('Subtotal: Rs.$subtotal');
+    bytes += EscPos.lineFeed;
+
+    // VAT
+    bytes += _textToBytes('VAT (13%): Rs.$vatAmount');
+    bytes += EscPos.lineFeed;
+
+    // Total (Bold)
     bytes += EscPos.boldOn;
-    bytes += _textToBytes('TOTAL: $total');
+    bytes += _textToBytes('TOTAL: Rs.$total');
     bytes += EscPos.lineFeed;
     bytes += EscPos.boldOff;
     bytes += EscPos.lineFeed;
