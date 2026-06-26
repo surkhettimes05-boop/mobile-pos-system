@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibration/vibration.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../billing/presentation/bloc/billing_bloc.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -24,9 +25,26 @@ class _HomePageState extends State<HomePage> {
 
   bool _isCameraOn = true;
   bool _isFlashOn = false;
+  bool _hasCameraPermission = false;
 
   // Cooldown mapping to prevent rapid firing of the same barcode
   final Map<String, DateTime> _lastScanTimes = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _requestCameraPermission();
+  }
+
+  Future<void> _requestCameraPermission() async {
+    final status = await Permission.camera.request();
+    setState(() {
+      _hasCameraPermission = status.isGranted;
+      if (!_hasCameraPermission) {
+        _isCameraOn = false;
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -217,22 +235,27 @@ class _HomePageState extends State<HomePage> {
               shape: BoxShape.circle,
             ),
             alignment: Alignment.center,
-            child:
-                const Icon(Icons.videocam_off, color: Colors.white, size: 32),
+            child: Icon(
+              _hasCameraPermission ? Icons.videocam_off : Icons.camera_alt_outlined,
+              color: Colors.white,
+              size: 32,
+            ),
           ),
           const SizedBox(height: 16),
-          const Text(
-            'Camera is turned off',
-            style: TextStyle(
+          Text(
+            _hasCameraPermission ? 'Camera is turned off' : 'Camera Permission Required',
+            style: const TextStyle(
                 color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
           ),
           const SizedBox(height: 8),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 32),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
             child: Text(
-              'Turn on your camera to start scanning barcodes and items automatically.',
+              _hasCameraPermission
+                  ? 'Turn on your camera to start scanning barcodes and items automatically.'
+                  : 'This app needs camera permission to scan barcodes. Please grant permission to continue.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white70, fontSize: 12),
+              style: const TextStyle(color: Colors.white70, fontSize: 12),
             ),
           ),
           const SizedBox(height: 24),
@@ -244,12 +267,18 @@ class _HomePageState extends State<HomePage> {
                   borderRadius: BorderRadius.circular(20)),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             ),
-            icon: const Icon(Icons.videocam),
-            label: const Text('Turn on Camera',
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            onPressed: () {
-              setState(() => _isCameraOn = true);
-              _scannerController.start();
+            icon: Icon(_hasCameraPermission ? Icons.videocam : Icons.settings),
+            label: Text(
+              _hasCameraPermission ? 'Turn on Camera' : 'Open Settings',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            onPressed: () async {
+              if (_hasCameraPermission) {
+                setState(() => _isCameraOn = true);
+                _scannerController.start();
+              } else {
+                await openAppSettings();
+              }
             },
           )
         ],
