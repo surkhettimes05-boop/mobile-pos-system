@@ -22,7 +22,7 @@ class ShopRepositoryImpl implements ShopRepository {
             addressLine1: 'Kathmandu',
             addressLine2: 'Nepal',
             phoneNumber: '+977 9800000000',
-            upiId: 'your-esewa-id',
+            upiId: 'your-fonepay-merchant-id',
             footerText: 'Thank you, Visit again!!!'));
       }
     } catch (e) {

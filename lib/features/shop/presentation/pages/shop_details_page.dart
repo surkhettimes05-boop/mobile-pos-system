@@ -152,10 +152,10 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                       validator: AppValidators.required('Required'),
                     ),
                     const SizedBox(height: 15),
-                    const InputLabel(text: 'Payment ID (eSewa/Khalti)'),
+                    const InputLabel(text: 'FonePay Merchant ID'),
                     _buildTextField(
                       controller: _upiController,
-                      hint: 'your-esewa-id',
+                      hint: 'your-fonepay-merchant-id',
                     ),
                     const SizedBox(height: 15),
                     Row(
