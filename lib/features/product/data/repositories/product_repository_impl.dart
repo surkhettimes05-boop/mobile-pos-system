@@ -21,10 +21,24 @@ class ProductRepositoryImpl implements ProductRepository {
   Future<Either<Failure, Product>> getProductByBarcode(String barcode) async {
     try {
       final box = HiveDatabase.productBox;
-      final product = box.values.firstWhere(
-        (element) => element.barcode == barcode,
-        orElse: () => throw Exception('Product not found'),
+      final normalizedBarcode = barcode.trim();
+
+      // Debug: log all stored barcodes to help diagnose mismatches
+      // ignore: avoid_print
+      print('[BarcodeSearch] Looking for: "$normalizedBarcode"');
+      for (final p in box.values) {
+        // ignore: avoid_print
+        print('[BarcodeSearch] Stored barcode: "${p.barcode}" | name: ${p.name}');
+      }
+
+      final ProductModel? product = box.values.cast<ProductModel?>().firstWhere(
+        (element) => element != null && element.barcode.trim() == normalizedBarcode,
+        orElse: () => null,
       );
+
+      if (product == null) {
+        return Left(CacheFailure('Product not found: $normalizedBarcode'));
+      }
       return Right(product);
     } catch (e) {
       return Left(CacheFailure(e.toString()));
